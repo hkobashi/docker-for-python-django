@@ -1,0 +1,1 @@
+# 「python manage.py collectstatic」で集約させるCSSを格納するためのディレクトリ
