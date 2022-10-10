@@ -9,13 +9,26 @@ ENV LANG C.UTF-8 \
 RUN mkdir -p /src
 WORKDIR /src
 
+# MySQL接続に必要なモジュールなどをインストール
+RUN echo "Acquire::http::Pipeline-Depth 0;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
+echo "Acquire::http::No-Cache true;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
+echo "Acquire::BrokenProxy    true;" >> /etc/apt/apt.conf.d/99fixbadproxy
+RUN apt-get update --fix-missing && \
+    apt-get -y install gcc libmariadb-dev gunicorn
+
 # 指定したライブラリをインストール
-COPY requirements.txt /src/
+RUN mkdir -p /tmp
+COPY ./dockerfiles/python/* /tmp/
 RUN pip install --upgrade pip
-RUN pip install -r /src/requirements.txt
+RUN pip install -r /tmp/requirements.txt
+
+#COPY ./dockerfiles/python/ /tmp/
+RUN chmod +x /tmp/entrypoint.sh 
 
 # ソースコード取得
-COPY . /src/
+COPY src/ .
 
 # ポート5000で外部からの通信を受け付ける
 # EXPOSE 5000
+
+ENTRYPOINT [ "/tmp/entrypoint.sh" ]

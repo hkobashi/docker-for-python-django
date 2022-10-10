@@ -12,9 +12,13 @@ services:
       - db-store:/var/lib/mysql
     env_file:
       - ./.env
+    expose:
+      - 13306
+    ports:
+      - 13306:3306
     healthcheck:
       # dbコンテナにpingを実行(環境変数は「dockerfiles/mysql/.env」で定義)
-      test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD 
+      test: mysqladmin ping -h 0.0.0.0 -u$$MYSQL_USER -p$$MYSQL_PASSWORD 
   app:
     container_name: python
     build:
@@ -23,13 +27,17 @@ services:
     volumes:
       - ./src:/src
       - ./static:/static
-    # command:  bash -c "python manage.py collectstatic --noinput && \
-    #           gunicorn $$DJANGO_PROJECT.wsgi:application --bind 0.0.0.0:8000"
     env_file:
       - ./.env
     tty: true
     expose:
-      - "5000"
+      - 15000
+    ports:
+      - 15000:15000
+    # command:  bash -c "python $DJANGO_ROOT/manage.py collectstatic --noinput"
+#              python $DJANGO_ROOT/manage.py migrate && \
+#              gunicorn --chdir $DJANGO_ROOT $DJANGO_PROJECT.wsgi:application --bind 0.0.0.0:15000"
+    # command: gunicorn --chdir $DJANGO_ROOT $DJANGO_PROJECT.wsgi:application --bind 0.0.0.0:15000
     depends_on:
       - db
   web:
@@ -39,6 +47,9 @@ services:
       dockerfile: ./dockerfiles/nginx/Dockerfile
     volumes:
       - ./dockerfiles/nginx/django.conf:/etc/nginx/conf.d/django.conf
+      - ./src/$DJANGO_ROOT/static:/static  # この設定を追加
+    expose:
+      - 8080
     ports:
       - 8080:8080
     tty: true
