@@ -10,25 +10,27 @@ RUN mkdir -p /src
 WORKDIR /src
 
 # MySQL接続に必要なモジュールなどをインストール
-RUN echo "Acquire::http::Pipeline-Depth 0;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
-echo "Acquire::http::No-Cache true;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
-echo "Acquire::BrokenProxy    true;" >> /etc/apt/apt.conf.d/99fixbadproxy
+# RUN echo "Acquire::http::Pipeline-Depth 0;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
+# echo "Acquire::http::No-Cache true;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
+# echo "Acquire::BrokenProxy    true;" >> /etc/apt/apt.conf.d/99fixbadproxy
+RUN { \
+    echo 'Acquire::http::Pipeline-Depth 0;'; \
+    echo 'Acquire::http::No-Cache true;'; \
+    echo 'Acquire::BrokenProxy    true;'; \
+  } >> /etc/apt/apt.conf.d/99fixbadproxy
+
 RUN apt-get update --fix-missing && \
-    apt-get -y install gcc libmariadb-dev gunicorn
+    apt-get install -y --no-install-recommends gcc libmariadb-dev
+    #gunicorn libmariadb-dev
 
 # 指定したライブラリをインストール
-RUN mkdir -p /tmp
+# RUN mkdir -p /tmp
 COPY ./dockerfiles/python/* /tmp/
-RUN pip install --upgrade pip
-RUN pip install -r /tmp/requirements.txt
-
-#COPY ./dockerfiles/python/ /tmp/
-RUN chmod +x /tmp/entrypoint.sh 
+RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt
+# entrypoint.shに実行権限を付与
+RUN chmod +x /tmp/entrypoint.sh
 
 # ソースコード取得
 COPY src/ .
-
-# ポート5000で外部からの通信を受け付ける
-# EXPOSE 5000
 
 ENTRYPOINT [ "/tmp/entrypoint.sh" ]
