@@ -9,10 +9,6 @@ ENV LANG C.UTF-8 \
 RUN mkdir -p /src
 WORKDIR /src
 
-# MySQL接続に必要なモジュールなどをインストール
-# RUN echo "Acquire::http::Pipeline-Depth 0;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
-# echo "Acquire::http::No-Cache true;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
-# echo "Acquire::BrokenProxy    true;" >> /etc/apt/apt.conf.d/99fixbadproxy
 RUN { \
     echo 'Acquire::http::Pipeline-Depth 0;'; \
     echo 'Acquire::http::No-Cache true;'; \

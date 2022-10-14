@@ -1,0 +1,12 @@
+# MySQL関連の設定
+MYSQL_ROOT_PASSWORD=root # MYSQLのルートパスワードがないとコンテナが起動しない
+MYSQL_DATABASE=django-db # プロジェクト名に応じて変更
+MYSQL_USER=django-user
+MYSQL_PASSWORD=django-password
+
+# Django関連の設定
+DJANGO_ROOT="djangogirls"
+DJANGO_PROJECT="mysite"
+SECRET_KEY="test"
+DJANGO_ALLOWED_HOSTS="*"
+DEBUG=True
