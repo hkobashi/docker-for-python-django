@@ -7,7 +7,8 @@
 docker-compose -f docker-compose-dev.yml up -d
 
 ### 新規でソースコードを作成する場合 ###
-# Djangoのプロジェクト名は.envで設定した「DJANGO_PROJECT」の値作成すること（次の例だとconfig）docker-compose -f docker-compose-dev.yml run app django-admin startproject config .
+# Djangoのプロジェクト名は.envで設定した「DJANGO_PROJECT」の値作成すること（次の例だとconfig）
+docker-compose -f docker-compose-dev.yml run app django-admin startproject config .
 # settings.pyに「STATIC_ROOT」を追記
 STATIC_ROOT = '/static/'
 # dockerfiles/python/Dockerfile最終行にあるENTRYPOINTをアンコメント
