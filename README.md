@@ -1,6 +1,6 @@
 # **python(django)** で使用する環境をまとめたもの
 
-# 使い方
+- 使い方
 ```
 ＜開発環境用コンテナの使い方＞
 # docker-compose.ymlで設定した内容でコンテナを立ち上げる
@@ -20,7 +20,7 @@ docker-compose -f docker-compose-dev.yml up -d
 docker-compose -f docker-compose-prd.yml up -d
 ```
 
-# 各ファイルの説明
+- 各ファイルの説明
 ```
 .
 ├── README.md # 本ファイル
