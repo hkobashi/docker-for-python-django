@@ -7,6 +7,7 @@
 docker-compose -f docker-compose-dev.yml up -d
 
 ### 新規でソースコードを作成する場合 ###
+# .env_sampleを参考に.envを作成
 # Djangoのプロジェクト名は.envで設定した「DJANGO_PROJECT」の値作成すること（次の例だとconfig）
 docker-compose -f docker-compose-dev.yml run app django-admin startproject config .
 # settings.pyに「STATIC_ROOT」を追記
