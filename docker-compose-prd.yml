@@ -1,3 +1,4 @@
+### 本番環境用コンテナ設定ファイル ###
 version: "3.8"
 
 services:
@@ -26,7 +27,7 @@ services:
       dockerfile: ./dockerfiles/python/Dockerfile
     volumes:
       - ./src:/src
-      - ./static:/static
+      - ./src/static:/static  # この設定を追加
     env_file:
       - ./.env
     tty: true
@@ -34,12 +35,10 @@ services:
       - 15000
     ports:
       - 15000:15000
-    # command:  bash -c "python $DJANGO_ROOT/manage.py collectstatic --noinput"
-#              python $DJANGO_ROOT/manage.py migrate && \
-#              gunicorn --chdir $DJANGO_ROOT $DJANGO_PROJECT.wsgi:application --bind 0.0.0.0:15000"
-    # command: gunicorn --chdir $DJANGO_ROOT $DJANGO_PROJECT.wsgi:application --bind 0.0.0.0:15000
+    entrypoint: bash -c "sh /tmp/entrypoint.sh"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   web:
     container_name: nginx
     build:
@@ -47,15 +46,16 @@ services:
       dockerfile: ./dockerfiles/nginx/Dockerfile
     volumes:
       - ./dockerfiles/nginx/django.conf:/etc/nginx/conf.d/django.conf
-      - ./src/$DJANGO_ROOT/static:/static  # この設定を追加
+      - ./src/static:/static  # この設定を追加
     expose:
       - 8080
     ports:
       - 8080:8080
     tty: true
-    working_dir: /workspace
+    working_dir: /static
     depends_on:
       - app
 
 volumes:
   db-store:
+  static:

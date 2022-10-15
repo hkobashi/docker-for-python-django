@@ -29,4 +29,4 @@ RUN chmod +x /tmp/entrypoint.sh
 # ソースコード取得
 COPY src/ .
 
-ENTRYPOINT [ "/tmp/entrypoint.sh" ]
+#ENTRYPOINT [ "/tmp/entrypoint.sh" ]

@@ -1,0 +1,45 @@
+### ローカル開発環境用コンテナ設定ファイル ###
+version: "3.8"
+
+services:
+  db:
+    container_name: mysql
+    build:
+      context: .
+      dockerfile: ./dockerfiles/mysql/Dockerfile
+    command: --default-authentication-plugin=mysql_native_password
+    tty: true
+    volumes:
+      - db-store:/var/lib/mysql
+    env_file:
+      - ./.env
+    expose:
+      - 13306
+    ports:
+      - 13306:3306
+    healthcheck:
+      # dbコンテナにpingを実行(環境変数は「dockerfiles/mysql/.env」で定義)
+      test: mysqladmin ping -h 0.0.0.0 -u$$MYSQL_USER -p$$MYSQL_PASSWORD 
+  app:
+    container_name: python
+    build:
+      context: .
+      dockerfile: ./dockerfiles/python/Dockerfile
+    volumes:
+      - ./src:/src
+      - ./src/static:/static  # この設定を追加
+    env_file:
+      - ./.env
+    tty: true
+    expose:
+      - 16000
+    ports:
+      - 16000:16000
+    command: bash -c "python manage.py runserver 0.0.0.0:16000" # ポート16000でrunserver
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-store:
+  static:
