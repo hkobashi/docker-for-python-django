@@ -3,7 +3,9 @@ FROM python:3.9.13-slim AS builder
 
 ENV LANG C.UTF-8 \
   PYTHONUNBUFFERED 1 \
-  PYTHONDONTWRITEBYTECODE=1
+  PYTHONDONTWRITEBYTECODE=1 \
+  TZ=Asia/Tokyo
+
 
 # ソースコード配置用ディレクトリ作成
 RUN mkdir -p /src
@@ -20,7 +22,6 @@ RUN apt-get update --fix-missing && \
     #gunicorn libmariadb-dev
 
 # 指定したライブラリをインストール
-# RUN mkdir -p /tmp
 COPY ./dockerfiles/python/* /tmp/
 RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt
 # entrypoint.shに実行権限を付与
